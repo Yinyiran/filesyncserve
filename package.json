@@ -1,0 +1,22 @@
+{
+  "name": "mengserve",
+  "version": "1.0.0",
+  "repository": "https://github.com/Yinyiran/mengserve.git",
+  "author": "chrisgad",
+  "license": "MIT",
+  "scripts": {
+    "start": "egg-scripts start --daemon",
+    "stop": "egg-scripts stop",
+    "serve": "egg-bin dev",
+    "debug": "egg-bin debug"
+  },
+  "dependencies": {
+    "egg": "^2.26.0",
+    "egg-mysql": "^3.0.0",
+    "egg-scripts": "^2.13.0",
+    "mz-modules": "^2.1.0"
+  },
+  "devDependencies": {
+    "egg-bin": "^4.14.1"
+  }
+}
