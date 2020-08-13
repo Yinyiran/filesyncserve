@@ -24,9 +24,19 @@ class ManageController extends Controller {
     ctx.body = servePaths;
   }
   // 获取所有文件
+  async getSyncData() {
+    const { ctx, service } = this;
+    const promiseArr = [
+      service.manage.getDirs(ctx.query.DirID),
+      service.manage.getDirFiles(ctx.query.DirID),
+    ]
+    const [dirs, files] = await Promise.all(promiseArr);
+    ctx.body = [].concat(dirs, files);
+  }
+  // 获取所有文件
   async getFiles() {
     const { ctx, service } = this;
-    ctx.body = await service.manage.getAllFile(`resource/${ctx.query.type}`)
+    ctx.body = await service.manage.getFiles(`resource`)
   }
   // 删除文件
   async deleteFile() {
@@ -37,14 +47,7 @@ class ManageController extends Controller {
   // 保存文件
   async saveDir() {
     const { ctx, service } = this;
-    const { DirID, DirName, ParentID } = ctx.request.body
-    ctx.body = service.manage.saveDir({ DirID, DirName, ParentID });
-  }
-  // 保存文件
-  async getDir() {
-    const { ctx, service } = this;
-    const { DirID, DirName, ParentID } = ctx.request.body
-    ctx.body = service.manage.saveDir({ DirID, DirName, ParentID });
+    ctx.body = service.manage.saveDir(ctx.request.body);
   }
 }
 

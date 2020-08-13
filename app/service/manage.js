@@ -17,7 +17,28 @@ class ManageService extends Service {
       return false
     }
   }
-  async getAllFile(path) {
+
+  saveDir(param) {
+    const { DirID } = param
+    if (DirID > 0) {
+      return this.app.mysql.update("dir", param, { where: { DirID } })
+    } else {
+      return this.app.mysql.insert("dir", param)
+    }
+  }
+  delDir(dirid) {
+    // await this.app.mysql.delete("dir", { DirID: dirid })
+    return this.app.mysql.delete("dir", { where: { DirID: dirid } });
+  }
+  getDirs(parentId) {
+    return this.app.mysql.select("dir", { where: { ParentID: parentId } });
+  }
+
+  getDirFiles(dirID) {
+    return this.app.mysql.select("file", { where: { DirID: dirID } })
+  }
+
+  async getFiles(path) {
     let allFiles = [];
     let getFile = (path) => {
       let arr = FS.readdirSync(path)
@@ -31,6 +52,7 @@ class ManageService extends Service {
     getFile(path)
     return allFiles;
   }
+
   async fileExist(hashs) {
     let list = await this.app.mysql.select('file', { where: { FileHash: hashs } });
     let res = {}
@@ -39,6 +61,7 @@ class ManageService extends Service {
     });
     return res;
   }
+
   async uploadFile(ctx) {
     let paramArr = [];
     let servePaths = [];
@@ -70,28 +93,11 @@ class ManageService extends Service {
     }
     return servePaths;
   }
+
   async deleteFile(path) {
     await this.app.mysql.delete("file", { FilePath: path })
     let fullPath = Path.join(this.config.baseDir, path);
     return FS.unlinkSync(fullPath);
-  }
-  async saveDir(param) {
-    const { DirID } = param
-    if (DirID > 0) {
-      const option = {
-        where: { DirID }
-      }
-      await this.app.mysql.update("dir", param, option)
-    } else {
-      await this.app.mysql.insert("dir", param)
-    }
-  }
-  async delDir(dirid) {
-    // await this.app.mysql.delete("dir", { DirID: dirid })
-    await this.app.mysql.delete("dir", { where: { DirID: dirid } });
-  }
-  async getDir(parentId) {
-    await this.app.mysql.select("dir", { where: { ParentID: parentId } });
   }
 }
 

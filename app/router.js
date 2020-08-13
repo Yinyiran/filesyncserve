@@ -1,12 +1,13 @@
 module.exports = app => {
   const { router, controller } = app;
   // index.js
-  router.post("/api/login", controller.manage.login);
+  router.post("/login", controller.manage.login);
   // DIR
-  router.post("/api/saveDir",controller.manage.saveDir)
+  router.post("/saveDir",controller.manage.saveDir)
   // 文件
-  router.get("/api/getFiles", controller.manage.getFiles)
-  router.post("/api/uploadFile", controller.manage.uploadFile)
-  router.post("/api/deleteFile", controller.manage.deleteFile)
-  router.post("/api/fileExist", controller.manage.fileExist)
+  router.get("/getSyncData", controller.manage.getSyncData)
+
+  router.post("/uploadFile", controller.manage.uploadFile)
+  router.post("/deleteFile", controller.manage.deleteFile)
+  router.post("/fileExist", controller.manage.fileExist)
 }
