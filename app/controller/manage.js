@@ -33,6 +33,19 @@ class ManageController extends Controller {
     const { ctx, service } = this;
     ctx.body = service.manage.deleteFile(ctx.request.body.FilePath);
   }
+
+  // 保存文件
+  async saveDir() {
+    const { ctx, service } = this;
+    const { DirID, DirName, ParentID } = ctx.request.body
+    ctx.body = service.manage.saveDir({ DirID, DirName, ParentID });
+  }
+  // 保存文件
+  async getDir() {
+    const { ctx, service } = this;
+    const { DirID, DirName, ParentID } = ctx.request.body
+    ctx.body = service.manage.saveDir({ DirID, DirName, ParentID });
+  }
 }
 
 module.exports = ManageController;

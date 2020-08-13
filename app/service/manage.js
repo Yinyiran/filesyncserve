@@ -75,6 +75,24 @@ class ManageService extends Service {
     let fullPath = Path.join(this.config.baseDir, path);
     return FS.unlinkSync(fullPath);
   }
+  async saveDir(param) {
+    const { DirID } = param
+    if (DirID > 0) {
+      const option = {
+        where: { DirID }
+      }
+      await this.app.mysql.update("dir", param, option)
+    } else {
+      await this.app.mysql.insert("dir", param)
+    }
+  }
+  async delDir(dirid) {
+    // await this.app.mysql.delete("dir", { DirID: dirid })
+    await this.app.mysql.delete("dir", { where: { DirID: dirid } });
+  }
+  async getDir(parentId) {
+    await this.app.mysql.select("dir", { where: { ParentID: parentId } });
+  }
 }
 
 module.exports = ManageService;
