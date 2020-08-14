@@ -63,15 +63,12 @@ class ManageService extends Service {
   }
 
   async uploadFile(ctx) {
-    let paramArr = [];
     let servePaths = [];
     const { body, files } = ctx.request;
-    let connect = this.app.mysql
     try {
       for (const file of files) {
         const name = file.filename.toLowerCase();
-        let ext = name.slice(name.lastIndexOf("."));
-        let newName = new Date().getTime() + ext
+        let newName = new Date().getTime() + name.slice(name.lastIndexOf("."));
         let basePath = UtilService[`${body.type}Path`];
         let dir = Path.join(this.config.baseDir, basePath);
         try {
@@ -83,15 +80,46 @@ class ManageService extends Service {
         const target = FS.createWriteStream(Path.join(dir, newName));
         await Pump(source, target);
         let serPath = Path.join(basePath, newName).replace(/\\/g, "/");
-        servePaths.push(serPath)
-        paramArr.push(`(null, ${connect.escape(body[file.field])} , '${serPath}')`);
+        await this.savefile()
+        servePaths.push(serPath);
       }
-      let query = `insert into file values ${paramArr.join()}`
-      await connect.query(query);
+    }
+    catch (err) {
+      console.log(err);
     } finally {
       await ctx.cleanupRequestFiles();// delete those request tmp files
+      return servePaths;
     }
-    return servePaths;
+  }
+
+  async saveFile(files) {
+    let connect = this.app.mysql;
+    let updateArr = [], newArr = [];
+    files.forEach(item => {
+      let { FileID, FileName, FileHash, DirID, ModifyTime, ServePath, FileSize, } = item;
+      let str = `${FileName}, ${FileHash}, ${DirID}, ${ServePath}, ${FileSize}, ${ModifyTime}`;
+      if (FileID) updateArr.push(`(${FileID},${str})`);
+      else newArr.push(`(${str})`)
+    })
+    if (updatArr.length > 0) {
+      let query = `insert into file (FileName, FileHash, DirID, ServePath, FileSize ModifyTime) values ${updatArr.join()}`
+      await connect.query(query);
+    }
+    if (newarr.length > 0) {
+      let query = `insert into file (FileID, FileHash, DirID, ServePath, FileSize, ModifyTime) values ${updatArr.join()} ON DUPLICATE KEY UPDATE 
+      FileHash=VALUES(FileHash), DirID=VALUES(DirID), ServePath=VALUES(ServePath), FileSize=VALUES(FileSize), ModifyTime=VALUES(ModifyTime)`
+      await connect.query(query);
+    }
+    // INSERT into`table`(id, fruit)
+    // VALUES(1, 'apple'), (2, 'orange'), (3, 'peach')
+    // ON DUPLICATE KEY UPDATE fruit = VALUES(fruit);
+
+    // UPDATE table
+    // SET column2 = (CASE column1 WHEN 1 THEN 'val1'
+    // WHEN 2 THEN 'val2'
+    // WHEN 3 THEN 'val3'
+    // END)
+    // WHERE column1 IN(1, 2, 3);
   }
 
   async deleteFile(path) {

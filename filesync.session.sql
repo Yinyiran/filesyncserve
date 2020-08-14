@@ -1,16 +1,16 @@
 /*
  Navicat Premium Data Transfer
-
+ 
  Source Server         : local
  Source Server Type    : MySQL
  Source Server Version : 80018
  Source Host           : localhost:3306
  Source Schema         : filesync
-
+ 
  Target Server Type    : MySQL
  Target Server Version : 80018
  File Encoding         : 65001
-
+ 
  Date: 13/08/2020 18:27:04
  */
 SET NAMES utf8mb4;
@@ -40,6 +40,11 @@ CREATE TABLE `file` (
   PRIMARY KEY (`FileID`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
 SET FOREIGN_KEY_CHECKS = 1;
-
 desc file;
 desc dir;
+-- 增加filesize
+alter table file
+add FileSize int(20) not null;
+-- 增加servepath
+alter table file
+add ServePath varchar(255) not null;
