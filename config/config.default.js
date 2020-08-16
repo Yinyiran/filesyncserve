@@ -7,7 +7,9 @@ module.exports = appInfo => {
     // token
     security: {
       csrf: {
-        headerName: 'x-csrf-token',// 自定义请求头
+        headerName: 'Authorizition',// 自定义请求头
+        cookieName: 'Authorizition', // Cookie 中的字段名，默认为 csrfToken
+        sessionName: 'Authorizition', // Session 中的字段名，默认为 csrfToken
       }
     },
     static: {
@@ -20,7 +22,9 @@ module.exports = appInfo => {
       // buffer: true, // in prod env, false in other envs
     },
     multipart: {
-      mode: "file"
+      fileSize: '50mb',
+      mode: 'stream',
+      fileExtensions: ['.xls', '.txt'], // 扩展几种上传的文件格式
     },
     mysql: {
       client: {
