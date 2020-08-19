@@ -11,10 +11,12 @@
     "debug": "egg-bin debug"
   },
   "dependencies": {
+    "await-stream-ready": "^1.0.1",
     "egg": "^2.26.0",
     "egg-mysql": "^3.0.0",
     "egg-scripts": "^2.13.0",
-    "mz-modules": "^2.1.0"
+    "mz-modules": "^2.1.0",
+    "stream-wormhole": "^1.1.0"
   },
   "devDependencies": {
     "egg-bin": "^4.14.1"

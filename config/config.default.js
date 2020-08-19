@@ -24,7 +24,7 @@ module.exports = appInfo => {
     multipart: {
       fileSize: '50mb',
       mode: 'stream',
-      fileExtensions: ['.xls', '.txt'], // 扩展几种上传的文件格式
+      fileExtensions: ['.xls', '.xlsx', '.txt', '.doc'], // 扩展几种上传的文件格式
     },
     mysql: {
       client: {

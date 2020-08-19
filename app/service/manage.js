@@ -64,10 +64,17 @@ class ManageService extends Service {
 
   async uploadFile(ctx) {
     const { body, files } = ctx.request;
-    // const stream = await ctx.getFileStream();
-
+    // encoding: '7bit'
+    // field: 'file_0'
+    // fieldname: 'file_0'
+    // filename: '0080r3INly1gdfc1r47pjj30u08kghdv.jpg'
+    // filepath: 'C:\Users\Chris\AppData\Local\Temp\egg-multipart-tmp\mengserve\2020\08\18\16\65e0b705-6ae4-4bbd-9f7f-75ecdd906d9b.jpg'
+    // mime: 'image/jpeg'
+    // mimeType: 'image/jpeg'
+    // transferEncoding: '7bit'
     let servePaths = [];
     const parts = ctx.multipart();
+    let files2 = [];
     let part;
     // parts() 返回 promise 对象
     while ((part = await parts()) != null) {
@@ -80,26 +87,29 @@ class ManageService extends Service {
       } else {
         // 这时是用户没有选择文件就点击了上传(part 是 file stream，但是 part.filename 为空)
         // 需要做出处理，例如给出错误提示消息
-        if (!part.filename) return;
+        if (!part.filename) throw "上传参数不对";
 
-        // part 是上传的文件流
-        console.log('field: ' + part.fieldname);
-        console.log('filename: ' + part.filename);
-        console.log('encoding: ' + part.encoding);
-        console.log('mime: ' + part.mime);
+        // // part 是上传的文件流
+        // console.log('field: ' + part.fieldname);
+        // console.log('filename: ' + part.filename);
+        // console.log('encoding: ' + part.encoding);
+        // console.log('mime: ' + part.mime);
         // 文件处理，上传到云存储等等
-        let result;
         try {
           // result = await ctx.oss.put('egg-multipart-test/' + part.filename, part);
+          const filename = stream.filename.toLowerCase();
+          const target = path.join(this.config.baseDir, 'resource/file', filename);
+          const writeStream = fs.createWriteStream(target);
+          await pump(stream, writeStream);
+          files2.push(filename);
         } catch (err) {
           // 必须将上传的文件流消费掉，要不然浏览器响应会卡死
           await sendToWormhole(part);
           throw err;
         }
-        console.log(result);
       }
+      return files2;
     }
-    return "11";
     try {
       for (const file of parts) {
         // const name = file.filename.toLowerCase();
