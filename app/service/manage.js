@@ -3,6 +3,8 @@ const FS = require('fs');
 const Path = require('path');
 const Pump = require('mz-modules/pump');
 const UtilService = require("../../service/utile")
+const sendToWormhole = require('stream-wormhole');
+// const awaitWriteStream = require('await-stream-ready').write;
 
 class ManageService extends Service {
   async login(param) {
@@ -64,14 +66,29 @@ class ManageService extends Service {
 
   async uploadFile(ctx) {
     const { body, files } = ctx.request;
-    // encoding: '7bit'
-    // field: 'file_0'
-    // fieldname: 'file_0'
-    // filename: '0080r3INly1gdfc1r47pjj30u08kghdv.jpg'
-    // filepath: 'C:\Users\Chris\AppData\Local\Temp\egg-multipart-tmp\mengserve\2020\08\18\16\65e0b705-6ae4-4bbd-9f7f-75ecdd906d9b.jpg'
-    // mime: 'image/jpeg'
-    // mimeType: 'image/jpeg'
-    // transferEncoding: '7bit'
+
+    const stream = await ctx.getFileStream();
+    const fileName = stream.filename;
+
+    let target = path.join(this.config.baseDir, `app/public/comfiles/${stream.filename}`);
+    const result = await new Promise((resolve, reject) => {
+      const remoteFileStream = fs.createWriteStream(target);
+      stream.pipe(remoteFileStream);
+      let errFlag;
+      remoteFileStream.on('error', err => {
+        errFlag = true;
+        sendToWormhole(stream);
+        remoteFileStream.destroy();
+        reject(err);
+      });
+
+      remoteFileStream.on('finish', async () => {
+        if (errFlag) return;
+        resolve({ fileName, name: stream.fields.name });
+      });
+    });
+    return result;  
+
     let servePaths = [];
     const parts = ctx.multipart();
     let files2 = [];

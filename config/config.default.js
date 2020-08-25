@@ -25,6 +25,23 @@ module.exports = appInfo => {
       fileSize: '50mb',
       mode: 'stream',
       fileExtensions: ['.xls', '.xlsx', '.txt', '.doc'], // 扩展几种上传的文件格式
+
+      // mode: 'stream',
+      // autoFields: false,
+      // defaultCharset: 'utf8',
+      // fieldNameSize: 100,
+      // fieldSize: '100kb',
+      // fields: 10,
+      // fileSize: '10mb',
+      // files: 10,
+      // fileExtensions: [],
+      // whitelist: null,
+      // tmpdir: path.join(os.tmpdir(), 'egg-multipart-tmp', appInfo.name),
+      // cleanSchedule: {
+      //   // run tmpdir clean job on every day 04:30 am
+      //   // cron style see https://github.com/eggjs/egg-schedule#cron-style-scheduling
+      //   cron: '0 30 4 * * *',
+      // }
     },
     mysql: {
       client: {
