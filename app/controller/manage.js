@@ -1,6 +1,13 @@
 const Controller = require("egg").Controller;
 
 class ManageController extends Controller {
+  // 上传文件
+  async uploadFile() {
+    const { ctx, service } = this;
+    let servePaths = await service.manage.uploadFile(ctx)
+    ctx.body = servePaths;
+  }
+
   // ------ 文件 -------
   // 根据filehash 判断文件是否已经上传
   async login() {
@@ -17,12 +24,7 @@ class ManageController extends Controller {
     const { ctx, service } = this;
     ctx.body = await service.manage.fileExist(ctx.request.body)
   }
-  // 上传文件
-  async uploadFile() {
-    const { ctx, service } = this;
-    let servePaths = await service.manage.uploadFile(ctx)
-    ctx.body = servePaths;
-  }
+
   // 获取所有文件
   async getSyncData() {
     const { ctx, service } = this;
